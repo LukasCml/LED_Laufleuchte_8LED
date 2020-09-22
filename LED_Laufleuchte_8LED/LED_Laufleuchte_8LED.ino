@@ -8,6 +8,15 @@
 
 byte led[8] = {2, 3, 4, 5, 6, 7, 8, 9};
 
+byte ledZustand[6][8] =
+{
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {0, 1, 0, 0, 0, 0, 1, 0},
+  {0, 0, 1, 0, 0, 1, 0, 0},
+  {0, 0, 0, 1, 1, 0, 0, 0},
+  {0, 0, 1, 0, 0, 1, 0, 0},
+  {0, 1, 0, 0, 0, 0, 1, 0},
+};
 
 void setup()
 {
@@ -19,10 +28,12 @@ void setup()
 
 void loop()
 {
-  for (byte i = 0; i < 8; i++)
+  for (byte i = 0; i < 6; i++)      //Zeilen
   {
-    digitalWrite(led[i], HIGH);
-    delay(150);
-    digitalWrite(led[i], LOW);
+    for (byte j = 0; j < 8; j++)    //Spalten
+    {
+      digitalWrite(led[j], ledZustand[i][j]);
+    }
+    delay(100);
   }
 }
