@@ -1,3 +1,5 @@
+
+
 /*
    Programm:          LED Laufleuchte mit 8 LED
    Letzte Änderung:   22.09.2020
@@ -6,8 +8,14 @@
    Hardware:      Arduino UNO / 8 LED's an Pin 2,3,4,5,6,7,8,9 / Laufleuchte
 */
 
-byte led[8] = {2, 3, 4, 5, 6, 7, 8, 9};
+#include <OneButton.h>
+OneButton button(10, false);
 
+unsigned long letzteZeit;
+int ledEinschaltDauer = 500;
+bool statusPower = false;
+int zeile = 0;
+byte led[8] = {2, 3, 4, 5, 6, 7, 8, 9};
 byte ledZustand[6][8] =
 {
   {1, 0, 0, 0, 0, 0, 0, 1},
@@ -24,16 +32,39 @@ void setup()
   {
     pinMode (led[i], OUTPUT);
   }
+  button.attachClick(StatusPowerSetzen);
 }
 
 void loop()
 {
-  for (byte i = 0; i < 6; i++)      //Zeilen
+  button.tick();
+  if (statusPower == true)
   {
-    for (byte j = 0; j < 8; j++)    //Spalten
+    if ((millis() - letzteZeit) > ledEinschaltDauer)
     {
-      digitalWrite(led[j], ledZustand[i][j]);
+      for (byte i = 0; i < 8; i++)                          //Zeilen
+      {
+        digitalWrite(led[i], ledZustand[zeile][i]);
+      }
+      zeile++;
+      if (zeile == 6)
+      {
+        zeile = 0;
+      }
+      letzteZeit = millis();
     }
-    delay(100);
   }
+  else
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      digitalWrite(led[i], LOW);
+    }
+  }
+}
+
+
+void StatusPowerSetzen()
+{
+  statusPower = !statusPower;
 }
